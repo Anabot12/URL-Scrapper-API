@@ -1,0 +1,55 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Scrapper</title>
+</head>
+<body>
+    <h1>URL Scrapper</h1>
+    <form id="scrapeForm">
+        <label for="urlInput">Enter URL:</label>
+        <input type="text" id="urlInput" name="url">
+        <button type="submit">Scrape</button>
+    </form>
+
+    <div id="resultContainer"></div>
+
+    <script>
+        document.getElementById("scrapeForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const urlInput = document.getElementById("urlInput").value;
+            scrapeUrl(urlInput);
+        });
+
+        async function scrapeUrl(url) {
+            try {
+                const response = await fetch('http://localhost:8000/api/scrape/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        url: url
+                    })
+                });
+
+                const data = await response.json();
+                displayResult(data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function displayResult(data) {
+            const resultContainer = document.getElementById("resultContainer");
+            resultContainer.innerHTML = `
+                <h2>Scraped Data:</h2>
+                <p>Title: ${data.title}</p>
+                <p>Image URL: ${data.image_url}</p>
+                <div>Content:</div>
+                <pre>${data.content}</pre>
+            `;
+        }
+    </script>
+</body>
+</html>
